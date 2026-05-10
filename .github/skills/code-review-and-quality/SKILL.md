@@ -40,6 +40,12 @@ Is user input validated and sanitized? Are secrets kept out of code? Is authenti
 
 Any N+1 query patterns? Any unbounded loops? Any unnecessary re-renders?
 
+## Comment Style Policy
+
+- Inline code comments should explain code intent, constraints, or non-obvious behavior.
+- Do not add branch/chapter/process comments inside source files.
+- Branch/chapter narrative belongs in story docs, chapter docs, and PR descriptions.
+
 ## Change Sizing
 
 ```

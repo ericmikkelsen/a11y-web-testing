@@ -52,6 +52,12 @@ Tackle the riskiest or most uncertain piece first. If it fails, you discover it 
 
 ## Implementation Rules
 
+### Comment Hygiene
+
+- Write inline comments only when they help explain non-obvious code behavior.
+- Avoid embedding branch/chapter/process notes in source comments.
+- Put branch/chapter context in story artifacts and PR descriptions.
+
 ### Rule 0: Simplicity First
 
 Ask: "What is the simplest thing that could work?" Implement the naive, obviously-correct version first. Optimize only after correctness is proven with tests.
