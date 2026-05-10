@@ -1,7 +1,7 @@
 import {
-  runAccessibilityChecks,
-  normalizeOptions,
-  normalizeFinding,
-} from "./runAccessibilityChecks.mjs";
+	runAccessibilityChecks,
+	normalizeOptions,
+	normalizeFinding,
+} from './runAccessibilityChecks.mjs';
 
 export { runAccessibilityChecks, normalizeOptions, normalizeFinding };

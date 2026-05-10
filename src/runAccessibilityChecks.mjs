@@ -1,51 +1,59 @@
-import { normalizeFinding } from "./normalizeFinding.mjs";
+import { normalizeFinding } from './normalizeFinding.mjs';
+
+/**
+ * @callback PluginFn
+ * @param {object} context
+ * @returns {Promise<object[]|object>|object[]|object}
+ */
 
 /**
  * @typedef {object} RunAccessibilityChecksOptions
  * @property {Document|object|null} [dom]
  * @property {() => Promise<boolean>} [ready]
  * @property {(target: unknown) => Promise<string>} [imageHandler]
- * @property {Array<(context: object) => Promise<object[]|object>|object[]|object>} [plugins]
+ * @property {PluginFn[]} [plugins]
  */
 
 /**
- * Contract-first entrypoint. Chapter 01 validates input and preserves a stable API.
- * Later chapters execute hooks and tests.
+ * Validates and normalizes API options before execution.
  *
  * @param {RunAccessibilityChecksOptions} [options]
  * @returns {Promise<object[]>}
  */
 const runAccessibilityChecks = async (options = {}) => {
-  // This entrypoint currently validates and normalizes the public contract.
-  const normalizedOptions = normalizeOptions(options);
+	const normalizedOptions = normalizeOptions(options);
 
-  void normalizedOptions;
+	void normalizedOptions;
 
-  return [];
+	return [];
 };
 
 const createDefaultReady = (dom) => {
-  const fallbackDocument = typeof document !== "undefined" ? document : null;
-  const activeDocument = dom ?? fallbackDocument;
+	const fallbackDocument = typeof document !== 'undefined' ? document : null;
+	const activeDocument = dom ?? fallbackDocument;
 
-  return async () => {
-    if (!activeDocument) {
-      return true;
-    }
+	return async () => {
+		if (!activeDocument) {
+			return true;
+		}
 
-    if (activeDocument.readyState !== "loading") {
-      return true;
-    }
+		if (activeDocument.readyState !== 'loading') {
+			return true;
+		}
 
-    return new Promise((resolve) => {
-      if (typeof activeDocument.addEventListener !== "function") {
-        resolve(true);
-        return;
-      }
+		return new Promise((resolve) => {
+			if (typeof activeDocument.addEventListener !== 'function') {
+				resolve(true);
+				return;
+			}
 
-      activeDocument.addEventListener("DOMContentLoaded", () => resolve(true), { once: true });
-    });
-  };
+			activeDocument.addEventListener(
+				'DOMContentLoaded',
+				() => resolve(true),
+				{ once: true }
+			);
+		});
+	};
 };
 
 /**
@@ -53,38 +61,46 @@ const createDefaultReady = (dom) => {
  * @returns {RunAccessibilityChecksOptions}
  */
 const normalizeOptions = (options) => {
-  if (!options || typeof options !== "object" || Array.isArray(options)) {
-    throw new TypeError("runAccessibilityChecks options must be an object.");
-  }
+	if (!options || typeof options !== 'object' || Array.isArray(options)) {
+		throw new TypeError(
+			'runAccessibilityChecks options must be an object.'
+		);
+	}
 
-  // Keep this object shape stable for downstream execution and serialization.
-  const normalized = {
-    dom: options.dom ?? null,
-    ready: options.ready ?? createDefaultReady(options.dom ?? null),
-    imageHandler: options.imageHandler ?? undefined,
-    plugins: options.plugins ?? [],
-  };
+	// Keep this object shape stable for downstream execution.
+	const normalized = {
+		dom: options.dom ?? null,
+		ready: options.ready ?? createDefaultReady(options.dom ?? null),
+		imageHandler: options.imageHandler ?? undefined,
+		plugins: options.plugins ?? [],
+	};
 
-  if (normalized.ready !== undefined && typeof normalized.ready !== "function") {
-    throw new TypeError("ready must be a function when provided.");
-  }
+	if (
+		normalized.ready !== undefined &&
+		typeof normalized.ready !== 'function'
+	) {
+		throw new TypeError('ready must be a function when provided.');
+	}
 
-  if (normalized.imageHandler !== undefined && typeof normalized.imageHandler !== "function") {
-    throw new TypeError("imageHandler must be a function when provided.");
-  }
+	if (
+		normalized.imageHandler !== undefined &&
+		typeof normalized.imageHandler !== 'function'
+	) {
+		throw new TypeError('imageHandler must be a function when provided.');
+	}
 
-  if (!Array.isArray(normalized.plugins)) {
-    throw new TypeError("plugins must be an array when provided.");
-  }
+	if (!Array.isArray(normalized.plugins)) {
+		throw new TypeError('plugins must be an array when provided.');
+	}
 
-  // Plugins are the extension point; each entry must be executable.
-  normalized.plugins.forEach((testFn, index) => {
-    if (typeof testFn !== "function") {
-      throw new TypeError(`plugins[${index}] must be a function.`);
-    }
-  });
+	// Plugins are the extension point; each entry must be executable.
+	normalized.plugins.forEach((testFn, index) => {
+		if (typeof testFn !== 'function') {
+			throw new TypeError(`plugins[${index}] must be a function.`);
+		}
+	});
 
-  return normalized;
+	return normalized;
 };
 
 export { runAccessibilityChecks, normalizeOptions, normalizeFinding };

@@ -3,6 +3,8 @@
 	"version": "1.0.0",
 	"description": "Code repository starter template with conventional commits and automated versioning",
 	"private": true,
+	"main": "./src/index.mjs",
+	"exports": "./src/index.mjs",
 	"scripts": {
 		"prepare": "husky",
 		"format": "prettier --write .",
