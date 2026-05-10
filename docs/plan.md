@@ -12,7 +12,7 @@ Library or Function should take this params object
 {
     ready:              function        	// async function that returns a promise with true when you're ready to start testing, or reject if it doesn't happen;
     imageHandler:       function        	// async function that returns a promise with a string of the image url or rejects if failed to load
-    additionalTests:    function[]      	// additional tests you want to perform
+    plugins:            function[]      	// plugins you want to run
     url:                dom,				// html dom to test
 }
 ```
@@ -41,7 +41,7 @@ This is an async function that returns a promise that completes when the dom is 
 
 A function to handle screenshots of offending elements or elements to check. It should be an async function that returns a promise when the image is successfully loaded, which is a string.
 
-#### additionalTests
+#### plugins
 
 These are tests that receive the document as a dom, and do their own tests, that return error objects mentioned above. a
 

@@ -2,7 +2,7 @@
 
 ## Motivation
 
-We need a small, reusable core library that can pass a DOM into accessibility test hooks before we build any host-specific runners, plugins, or UI layers. The first story should prove the contract and a first consumer of `additionalTests` without creating a large, hard-to-review PR.
+We need a small, reusable core library that can pass a DOM into accessibility test hooks before we build any host-specific runners, plugins, or UI layers. The first story should prove the contract and a first consumer of `plugins` without creating a large, hard-to-review PR.
 
 ## Assumptions
 
@@ -15,7 +15,7 @@ We need a small, reusable core library that can pass a DOM into accessibility te
 
 - [ ] The public library API is defined in one place and has a stable result schema.
 - [ ] The library waits for `ready` before running any checks.
-- [ ] The library passes the DOM into caller-provided `additionalTests`.
+- [ ] The library passes the DOM into caller-provided `plugins`.
 - [ ] Returned findings are normalized and include rule identity, human-readable context, WCAG metadata, and a target location.
 - [ ] A runnable browser example demonstrates passing a browser DOM through the framework.
 - [ ] A runnable Node example demonstrates passing a Node DOM context through the framework.
@@ -27,7 +27,7 @@ We need a small, reusable core library that can pass a DOM into accessibility te
 | --- | -------------------------------------------- | --------------------------------------------------------------------------- | ------ |
 | 01  | `chapter/library-v1/01-api-contract`         | Define the library entry point, options shape, and normalized finding schema. | <250 lines |
 | 02  | `chapter/library-v1/02-test-harness`         | Add the smallest contract test harness that proves the API shape and return contract. | <250 lines |
-| 03  | `chapter/library-v1/03-dom-hook-orchestration` | Implement readiness gating and make sure `additionalTests` receives the DOM context. | <250 lines |
+| 03  | `chapter/library-v1/03-dom-hook-orchestration` | Implement readiness gating and make sure `plugins` receives the DOM context. | <250 lines |
 | 04  | `chapter/library-v1/04-result-normalization` | Normalize hook output into the shared serializable result schema. | <250 lines |
 | 05  | `chapter/library-v1/05-example-docs`         | Document what both examples must demonstrate and how each maps to the framework contract. | <250 lines |
 | 06  | `chapter/library-v1/06-browser-and-node-examples` | Add one runnable browser example and one runnable Node example following the documented contracts. | <250 lines |

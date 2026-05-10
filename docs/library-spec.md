@@ -2,13 +2,13 @@
 
 ## Objective
 
-Build a framework-agnostic library that passes a page/document context into accessibility test hooks and returns structured findings. The first version should focus on proving the hook contract and normalization path, with AxeCore as the first external consumer of `additionalTests`.
+Build a framework-agnostic library that passes a page/document context into accessibility test hooks and returns structured findings. The first version should focus on proving the hook contract and normalization path, with AxeCore as the first external consumer of `plugins`.
 
 User outcome:
 - A consumer passes a page URL or document context into the library.
 - The library waits until the target is ready to inspect.
 - The library passes the DOM into caller-supplied checks.
-- AxeCore can be run through `additionalTests` without being built into the core library.
+- AxeCore can be run through `plugins` without being built into the core library.
 - The library returns normalized findings that can be rendered, stored, or forwarded by host apps.
 
 ## Tech Stack
@@ -44,7 +44,7 @@ Planned public API surface:
 - `runAccessibilityChecks(options)` - primary entry point
 - `ready` hook - resolves when the target is ready for inspection
 - `imageHandler` hook - resolves offending image URLs or captured image data when needed
-- `additionalTests` hook - caller-provided checks that receive the DOM and return findings
+- `plugins` hook - caller-provided checks that receive the DOM and return findings
 
 ## Code Style
 
@@ -77,8 +77,8 @@ Start with contract tests that prove the public API shape and the minimal execut
 
 Must cover:
 - The library waits for `ready` before running checks.
-- The library passes the DOM into `additionalTests`.
-- AxeCore can be executed through `additionalTests` as the first integration proof.
+- The library passes the DOM into `plugins`.
+- AxeCore can be executed through `plugins` as the first integration proof.
 - The library normalizes all returned findings to the shared schema.
 - AxeCore findings can be normalized without changing the hook contract.
 - The library surfaces human-check cases distinctly when a rule cannot be proven automatically.
@@ -111,7 +111,7 @@ Never:
 The library is ready for the next implementation step when:
 - The public API is defined in one place and reviewed.
 - The result schema includes rule identity, human-readable context, target location, and WCAG metadata.
-- The `ready`, `imageHandler`, and `additionalTests` hooks have explicit contracts.
+- The `ready`, `imageHandler`, and `plugins` hooks have explicit contracts.
 - The first test suite proves the library waits for readiness, passes the DOM to hooks, and returns normalized findings from AxeCore.
 - The design stays reusable for the later runner and plugin layers.
 
@@ -122,4 +122,4 @@ The library is ready for the next implementation step when:
 - Should `violation` support a third `check` state in v1, or should that be a separate field such as `status`?
 - Should the library own built-in rule definitions, or should those live in a separate rule package?
 - Should `imageHandler` return a URL, a data URI, or a richer image descriptor?
-- Should `additionalTests` receive the full document context object, or only the DOM/document reference?
+- Should `plugins` receive the full document context object, or only the DOM/document reference?
