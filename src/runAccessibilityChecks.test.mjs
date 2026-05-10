@@ -18,7 +18,7 @@ test('runAccessibilityChecks returns an array for a valid contract shape', async
 	assert.deepEqual(results, []);
 });
 
-test('public API exports chapter 01 contract functions', () => {
+test('public API exports contract functions', () => {
 	assert.equal(typeof runAccessibilityChecks, 'function');
 	assert.equal(typeof normalizeOptions, 'function');
 	assert.equal(typeof normalizeFinding, 'function');
