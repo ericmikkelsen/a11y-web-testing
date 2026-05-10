@@ -1,7 +1,5 @@
 const { normalizeFinding } = require("./normalizeFinding");
 
-const ALLOWED_OPTION_KEYS = new Set(["dom", "ready", "imageHandler", "plugins"]);
-
 /**
  * @typedef {object} RunAccessibilityChecksOptions
  * @property {Document|object|null} [dom]
@@ -33,12 +31,6 @@ const normalizeOptions = (options) => {
   if (!options || typeof options !== "object" || Array.isArray(options)) {
     throw new TypeError("runAccessibilityChecks options must be an object.");
   }
-
-  Object.keys(options).forEach((key) => {
-    if (!ALLOWED_OPTION_KEYS.has(key)) {
-      throw new TypeError(`Unsupported option: ${key}.`);
-    }
-  });
 
   const normalized = {
     dom: options.dom ?? null,

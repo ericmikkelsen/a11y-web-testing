@@ -5,7 +5,8 @@
 	"private": true,
 	"scripts": {
 		"prepare": "husky",
-		"format": "prettier --write ."
+		"format": "prettier --write .",
+		"test": "node --test"
 	},
 	"lint-staged": {
 		"*.{js,jsx,ts,tsx,mjs,cjs,vue,svelte,astro,css,scss,sass,less,html,svg,json,yaml,yml,md}": "prettier --write"
