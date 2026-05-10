@@ -5,7 +5,7 @@ import {
 	runAccessibilityChecks,
 	normalizeOptions,
 	normalizeFinding,
-} from './runAccessibilityChecks.mjs';
+} from './index.mjs';
 
 // Entry-point contract behavior.
 
@@ -16,6 +16,30 @@ test('runAccessibilityChecks returns an array for a valid contract shape', async
 	});
 
 	assert.deepEqual(results, []);
+});
+
+test('public API exports contract functions', () => {
+	assert.equal(typeof runAccessibilityChecks, 'function');
+	assert.equal(typeof normalizeOptions, 'function');
+	assert.equal(typeof normalizeFinding, 'function');
+});
+
+test('runAccessibilityChecks returns a serializable results payload', async () => {
+	const results = await runAccessibilityChecks({
+		plugins: [() => []],
+		ready: async () => true,
+	});
+
+	const serialized = JSON.stringify(results);
+
+	assert.equal(typeof serialized, 'string');
+	assert.deepEqual(JSON.parse(serialized), []);
+});
+
+test('runAccessibilityChecks rejects non-object options', async () => {
+	await assert.rejects(runAccessibilityChecks(null), {
+		message: 'runAccessibilityChecks options must be an object.',
+	});
 });
 
 test('normalizeOptions validates function hooks and plugins', () => {
@@ -154,4 +178,26 @@ test('normalizeFinding validates required enum and string fields', () => {
 			message: 'Required finding fields must be strings.',
 		}
 	);
+});
+
+test('normalizeFinding trims text and normalizes missing optional fields', () => {
+	const normalizedFinding = normalizeFinding({
+		violation: 'check',
+		wcagVersion: false,
+		ruleId: '  aria-label-missing  ',
+		rule: '  Form controls must have labels  ',
+		message: '  Input is missing an accessible name  ',
+		url: '  https://example.com/form  ',
+	});
+
+	assert.deepEqual(normalizedFinding, {
+		violation: 'check',
+		wcagVersion: false,
+		ruleId: 'aria-label-missing',
+		rule: 'Form controls must have labels',
+		message: 'Input is missing an accessible name',
+		target: null,
+		url: 'https://example.com/form',
+		wcagURL: null,
+	});
 });

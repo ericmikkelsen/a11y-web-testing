@@ -45,6 +45,7 @@ Any N+1 query patterns? Any unbounded loops? Any unnecessary re-renders?
 - Inline code comments should explain code intent, constraints, or non-obvious behavior.
 - Do not add branch/chapter/process comments inside source files.
 - Branch/chapter narrative belongs in story docs, chapter docs, and PR descriptions.
+- Apply the same rule to code-facing strings: avoid branch/chapter/process wording in test names, assertion messages, and runtime/user-facing text.
 
 ## Change Sizing
 
