@@ -31,6 +31,34 @@ test("normalizeOptions validates function hooks and plugins", () => {
   assert.equal(typeof normalized.imageHandler, "function");
 });
 
+test("normalizeOptions sets default ready hook and optional imageHandler", async () => {
+  const normalized = normalizeOptions({ plugins: [] });
+
+  assert.equal(typeof normalized.ready, "function");
+  assert.equal(normalized.imageHandler, undefined);
+  assert.equal(await normalized.ready(), true);
+});
+
+test("normalizeOptions default ready waits for DOMContentLoaded when loading", async () => {
+  let domReadyHandler;
+  const fakeDocument = {
+    readyState: "loading",
+    addEventListener: (eventName, handler) => {
+      if (eventName === "DOMContentLoaded") {
+        domReadyHandler = handler;
+      }
+    },
+  };
+
+  const normalized = normalizeOptions({ dom: fakeDocument, plugins: [] });
+  const readyPromise = normalized.ready();
+
+  assert.equal(typeof domReadyHandler, "function");
+  domReadyHandler();
+
+  assert.equal(await readyPromise, true);
+});
+
 // Guardrails for invalid option shapes.
 
 test("normalizeOptions rejects invalid plugins values", () => {

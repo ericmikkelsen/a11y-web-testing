@@ -24,6 +24,30 @@ const runAccessibilityChecks = async (options = {}) => {
   return [];
 };
 
+const createDefaultReady = (dom) => {
+  const fallbackDocument = typeof document !== "undefined" ? document : null;
+  const activeDocument = dom ?? fallbackDocument;
+
+  return async () => {
+    if (!activeDocument) {
+      return true;
+    }
+
+    if (activeDocument.readyState !== "loading") {
+      return true;
+    }
+
+    return new Promise((resolve) => {
+      if (typeof activeDocument.addEventListener !== "function") {
+        resolve(true);
+        return;
+      }
+
+      activeDocument.addEventListener("DOMContentLoaded", () => resolve(true), { once: true });
+    });
+  };
+};
+
 /**
  * @param {RunAccessibilityChecksOptions} options
  * @returns {RunAccessibilityChecksOptions}
@@ -36,8 +60,8 @@ const normalizeOptions = (options) => {
   // Keep this object shape stable for downstream execution and serialization.
   const normalized = {
     dom: options.dom ?? null,
-    ready: options.ready,
-    imageHandler: options.imageHandler,
+    ready: options.ready ?? createDefaultReady(options.dom ?? null),
+    imageHandler: options.imageHandler ?? undefined,
     plugins: options.plugins ?? [],
   };
 
