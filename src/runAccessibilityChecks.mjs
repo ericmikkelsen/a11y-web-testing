@@ -1,4 +1,4 @@
-const { normalizeFinding } = require("./normalizeFinding");
+import { normalizeFinding } from "./normalizeFinding.mjs";
 
 /**
  * @typedef {object} RunAccessibilityChecksOptions
@@ -63,8 +63,4 @@ const normalizeOptions = (options) => {
   return normalized;
 };
 
-module.exports = {
-  runAccessibilityChecks,
-  normalizeOptions,
-  normalizeFinding,
-};
+export { runAccessibilityChecks, normalizeOptions, normalizeFinding };

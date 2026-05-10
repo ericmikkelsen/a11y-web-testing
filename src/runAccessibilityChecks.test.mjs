@@ -1,11 +1,11 @@
-const test = require("node:test");
-const assert = require("node:assert/strict");
+import test from "node:test";
+import assert from "node:assert/strict";
 
-const {
+import {
   runAccessibilityChecks,
   normalizeOptions,
   normalizeFinding,
-} = require("./runAccessibilityChecks");
+} from "./runAccessibilityChecks.mjs";
 
 // Entry-point contract behavior.
 

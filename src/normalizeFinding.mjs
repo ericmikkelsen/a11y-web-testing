@@ -65,6 +65,4 @@ const asNullableString = (value) => {
   return value.trim();
 };
 
-module.exports = {
-  normalizeFinding,
-};
+export { normalizeFinding };
