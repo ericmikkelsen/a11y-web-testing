@@ -16,6 +16,7 @@ const { normalizeFinding } = require("./normalizeFinding");
  * @returns {Promise<object[]>}
  */
 const runAccessibilityChecks = async (options = {}) => {
+  // This entrypoint currently validates and normalizes the public contract.
   const normalizedOptions = normalizeOptions(options);
 
   void normalizedOptions;
@@ -32,6 +33,7 @@ const normalizeOptions = (options) => {
     throw new TypeError("runAccessibilityChecks options must be an object.");
   }
 
+  // Keep this object shape stable for downstream execution and serialization.
   const normalized = {
     dom: options.dom ?? null,
     ready: options.ready,
@@ -51,6 +53,7 @@ const normalizeOptions = (options) => {
     throw new TypeError("plugins must be an array when provided.");
   }
 
+  // Plugins are the extension point; each entry must be executable.
   normalized.plugins.forEach((testFn, index) => {
     if (typeof testFn !== "function") {
       throw new TypeError(`plugins[${index}] must be a function.`);

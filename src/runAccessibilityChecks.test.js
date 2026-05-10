@@ -7,6 +7,8 @@ const {
   normalizeFinding,
 } = require("./runAccessibilityChecks");
 
+// Entry-point contract behavior.
+
 test("runAccessibilityChecks returns an array for a valid contract shape", async () => {
   const results = await runAccessibilityChecks({
     plugins: [() => []],
@@ -29,6 +31,8 @@ test("normalizeOptions validates function hooks and plugins", () => {
   assert.equal(typeof normalized.imageHandler, "function");
 });
 
+// Guardrails for invalid option shapes.
+
 test("normalizeOptions rejects invalid plugins values", () => {
   assert.throws(() => normalizeOptions({ plugins: "not-an-array" }), {
     message: "plugins must be an array when provided.",
@@ -47,6 +51,8 @@ test("normalizeOptions ignores unknown options for forward compatibility", () =>
 
   assert.deepEqual(normalized.plugins, []);
 });
+
+// Finding schema normalization and validation.
 
 test("normalizeFinding returns a stable serializable schema", () => {
   const normalizedFinding = normalizeFinding({
