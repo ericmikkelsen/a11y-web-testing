@@ -11,7 +11,7 @@
 		"*.{js,jsx,ts,tsx,mjs,cjs,vue,svelte,astro,css,scss,sass,less,html,svg,json,yaml,yml,md}": "prettier --write"
 	},
 	"devDependencies": {
-		"@commitlint/cli": "^20.5.2",
+		"@commitlint/cli": "^21.0.0",
 		"@commitlint/config-conventional": "^20.5.0",
 		"@semantic-release/changelog": "^6.0.3",
 		"@semantic-release/commit-analyzer": "^13.0.1",
