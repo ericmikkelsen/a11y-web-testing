@@ -23,13 +23,13 @@ We need a small, reusable core library that can pass a DOM into accessibility te
 
 ## Chapters
 
-| #   | Branch                                       | One-sentence scope                                                          | Budget |
-| --- | -------------------------------------------- | --------------------------------------------------------------------------- | ------ |
-| 01  | `chapter/library-v1/01-api-contract`         | Define the library entry point, options shape, and normalized finding schema. | <250 lines |
-| 02  | `chapter/library-v1/02-test-harness`         | Add the smallest contract test harness that proves the API shape and return contract. | <250 lines |
-| 03  | `chapter/library-v1/03-dom-hook-orchestration` | Implement readiness gating and make sure `plugins` receives the DOM context. | <250 lines |
-| 04  | `chapter/library-v1/04-result-normalization` | Normalize hook output into the shared serializable result schema. | <250 lines |
-| 05  | `chapter/library-v1/05-example-docs`         | Document what both examples must demonstrate and how each maps to the framework contract. | <250 lines |
+| #   | Branch                                            | One-sentence scope                                                                                 | Budget     |
+| --- | ------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ---------- |
+| 01  | `chapter/library-v1/01-api-contract`              | Define the library entry point, options shape, and normalized finding schema.                      | <250 lines |
+| 02  | `chapter/library-v1/02-test-harness`              | Add the smallest contract test harness that proves the API shape and return contract.              | <250 lines |
+| 03  | `chapter/library-v1/03-dom-hook-orchestration`    | Implement readiness gating and make sure `plugins` receives the DOM context.                       | <250 lines |
+| 04  | `chapter/library-v1/04-result-normalization`      | Normalize hook output into the shared serializable result schema.                                  | <250 lines |
+| 05  | `chapter/library-v1/05-example-docs`              | Document what both examples must demonstrate and how each maps to the framework contract.          | <250 lines |
 | 06  | `chapter/library-v1/06-browser-and-node-examples` | Add one runnable browser example and one runnable Node example following the documented contracts. | <250 lines |
 
 ## Out of Scope
@@ -54,3 +54,4 @@ We need a small, reusable core library that can pass a DOM into accessibility te
 - Chapter 04 should only normalize findings; it should not expand the hook surface.
 - Chapter 05 should define example requirements only and avoid changing the framework contract.
 - Chapter 06 should only add runnable examples and avoid changing the framework contract.
+- Chapter 05 requirements are documented in [example-contracts.md](example-contracts.md).
