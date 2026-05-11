@@ -136,20 +136,68 @@ test('runAccessibilityChecks rejects non-string imageHandler return values', asy
 	);
 });
 
-test('runAccessibilityChecks combines plugin outputs in order', async () => {
+test('runAccessibilityChecks normalizes plugin findings in order', async () => {
 	const results = await runAccessibilityChecks({
 		ready: async () => true,
 		plugins: [
-			() => [{ ruleId: 'first' }],
-			async () => [{ ruleId: 'second' }, { ruleId: 'third' }],
+			() => [
+				{
+					violation: true,
+					wcagVersion: '2.2',
+					ruleId: ' first ',
+					rule: ' First rule ',
+					message: ' First message ',
+					target: '  button#one  ',
+					url: '  https://example.com/one  ',
+				},
+			],
+			async () => [
+				{
+					violation: 'check',
+					wcagVersion: false,
+					ruleId: 'second',
+					rule: 'Second rule',
+					message: 'Second message',
+					url: 'https://example.com/two',
+				},
+			],
 		],
 	});
 
 	assert.deepEqual(results, [
-		{ ruleId: 'first' },
-		{ ruleId: 'second' },
-		{ ruleId: 'third' },
+		{
+			violation: true,
+			wcagVersion: '2.2',
+			ruleId: 'first',
+			rule: 'First rule',
+			message: 'First message',
+			target: 'button#one',
+			url: 'https://example.com/one',
+			wcagURL: null,
+		},
+		{
+			violation: 'check',
+			wcagVersion: false,
+			ruleId: 'second',
+			rule: 'Second rule',
+			message: 'Second message',
+			target: null,
+			url: 'https://example.com/two',
+			wcagURL: null,
+		},
 	]);
+});
+
+test('runAccessibilityChecks rejects invalid plugin findings', async () => {
+	await assert.rejects(
+		runAccessibilityChecks({
+			ready: async () => true,
+			plugins: [() => [{ ruleId: 'missing-required-fields' }]],
+		}),
+		{
+			message: "Finding violation must be true, false, or 'check'.",
+		}
+	);
 });
 
 test('runAccessibilityChecks rejects non-array plugin output', async () => {

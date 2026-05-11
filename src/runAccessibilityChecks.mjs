@@ -39,7 +39,7 @@ const runAccessibilityChecks = async (options = {}) => {
 			throw new TypeError('plugins must return an array of findings.');
 		}
 
-		findings.push(...pluginResult);
+		findings.push(...pluginResult.map(normalizeFinding));
 	}
 
 	return findings;
