@@ -21,18 +21,18 @@ import { normalizeFinding } from './normalizeFinding.mjs';
  * @returns {Promise<object[]>}
  */
 const runAccessibilityChecks = async (options = {}) => {
-	const normalizedOptions = normalizeOptions(options);
+	const { ready, plugins, dom, imageHandler } = normalizeOptions(options);
 	const findings = [];
-	const isReady = await normalizedOptions.ready();
+	const isReady = await ready();
 
 	if (isReady === false) {
 		return [];
 	}
 
-	for (const plugin of normalizedOptions.plugins) {
+	for (const plugin of plugins) {
 		const pluginResult = await plugin({
-			dom: normalizedOptions.dom,
-			imageHandler: normalizedOptions.imageHandler,
+			dom,
+			imageHandler,
 		});
 
 		if (!Array.isArray(pluginResult)) {
