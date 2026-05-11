@@ -54,3 +54,4 @@ We need a small, reusable core library that can pass a DOM into accessibility te
 - Chapter 04 should only normalize findings; it should not expand the hook surface.
 - Chapter 05 should define example requirements only and avoid changing the framework contract.
 - Chapter 06 should only add runnable examples and avoid changing the framework contract.
+- Chapter 05 requirements are documented in [docs/example-contracts.md](docs/example-contracts.md).
