@@ -42,6 +42,142 @@ test('runAccessibilityChecks rejects non-object options', async () => {
 	});
 });
 
+test('runAccessibilityChecks waits for ready before invoking plugins', async () => {
+	const events = [];
+	let resolveReady;
+	const readyGate = new Promise((resolve) => {
+		resolveReady = resolve;
+	});
+
+	const runPromise = runAccessibilityChecks({
+		ready: async () => {
+			events.push('ready');
+			await readyGate;
+			return true;
+		},
+		plugins: [() => {
+			events.push('plugin');
+			return [];
+		}],
+	});
+
+	await Promise.resolve();
+	assert.deepEqual(events, ['ready']);
+
+	resolveReady(true);
+	await runPromise;
+
+	assert.deepEqual(events, ['ready', 'plugin']);
+});
+
+test('runAccessibilityChecks returns no findings when ready resolves false', async () => {
+	let pluginCalled = false;
+
+	const results = await runAccessibilityChecks({
+		ready: async () => false,
+		plugins: [() => {
+			pluginCalled = true;
+			return [{ ruleId: 'should-not-run' }];
+		}],
+	});
+
+	assert.equal(pluginCalled, false);
+	assert.deepEqual(results, []);
+});
+
+test('runAccessibilityChecks rejects non-boolean ready return values', async () => {
+	await assert.rejects(
+		runAccessibilityChecks({
+			ready: async () => 'yes',
+			plugins: [() => []],
+		}),
+		{
+			message: 'ready must resolve to a boolean value.',
+		}
+	);
+});
+
+test('runAccessibilityChecks passes dom and imageHandler into plugins', async () => {
+	const dom = { nodeType: 9 };
+	const imageHandler = async () => 'https://example.com/image.png';
+	let receivedContext;
+
+	await runAccessibilityChecks({
+		dom,
+		imageHandler,
+		ready: async () => true,
+		plugins: [async (context) => {
+			receivedContext = context;
+			return [];
+		}],
+	});
+
+	assert.equal(receivedContext.dom, dom);
+	assert.equal(typeof receivedContext.imageHandler, 'function');
+	assert.equal(
+		await receivedContext.imageHandler('target'),
+		'https://example.com/image.png'
+	);
+});
+
+test('runAccessibilityChecks rejects non-string imageHandler return values', async () => {
+	await assert.rejects(
+		runAccessibilityChecks({
+			ready: async () => true,
+			imageHandler: async () => 42,
+			plugins: [async ({ imageHandler }) => {
+				await imageHandler('target');
+				return [];
+			}],
+		}),
+		{
+			message: 'imageHandler must resolve to a string URL.',
+		}
+	);
+});
+
+test('runAccessibilityChecks combines plugin outputs in order', async () => {
+	const results = await runAccessibilityChecks({
+		ready: async () => true,
+		plugins: [
+			() => [{ ruleId: 'first' }],
+			async () => [{ ruleId: 'second' }, { ruleId: 'third' }],
+		],
+	});
+
+	assert.deepEqual(results, [
+		{ ruleId: 'first' },
+		{ ruleId: 'second' },
+		{ ruleId: 'third' },
+	]);
+});
+
+test('runAccessibilityChecks rejects non-array plugin output', async () => {
+	await assert.rejects(
+		runAccessibilityChecks({
+			ready: async () => true,
+			plugins: [() => ({ ruleId: 'invalid-shape' })],
+		}),
+		{
+			message: 'plugins must return an array of findings.',
+		}
+	);
+});
+
+test('runAccessibilityChecks surfaces plugin errors', async () => {
+	await assert.rejects(
+		runAccessibilityChecks({
+			ready: async () => true,
+			plugins: [() => {
+				throw new Error('plugin failed');
+			}],
+		}),
+		{
+			message: 'plugin failed',
+		}
+	);
+});
+
 test('normalizeOptions validates function hooks and plugins', () => {
 	const normalized = normalizeOptions({
 		dom: { nodeType: 9 },

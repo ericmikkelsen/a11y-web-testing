@@ -3,7 +3,7 @@ import { normalizeFinding } from './normalizeFinding.mjs';
 /**
  * @callback PluginFn
  * @param {object} context
- * @returns {Promise<object[]|object>|object[]|object}
+ * @returns {Promise<object[]>|object[]}
  */
 
 /**
@@ -15,19 +15,78 @@ import { normalizeFinding } from './normalizeFinding.mjs';
  */
 
 /**
- * Validates and normalizes API options before execution.
+ * Orchestrates readiness and plugin execution for one DOM context.
  *
  * @param {RunAccessibilityChecksOptions} [options]
  * @returns {Promise<object[]>}
  */
 const runAccessibilityChecks = async (options = {}) => {
 	const normalizedOptions = normalizeOptions(options);
+	const findings = [];
+	const isReady = await normalizedOptions.ready();
 
-	void normalizedOptions;
+	if (isReady === false) {
+		return [];
+	}
 
-	return [];
+	for (const plugin of normalizedOptions.plugins) {
+		const pluginResult = await plugin({
+			dom: normalizedOptions.dom,
+			imageHandler: normalizedOptions.imageHandler,
+		});
+
+		if (!Array.isArray(pluginResult)) {
+			throw new TypeError('plugins must return an array of findings.');
+		}
+
+		findings.push(...pluginResult);
+	}
+
+	return findings;
 };
 
+/**
+ * Wraps a readiness hook with strict boolean-return validation.
+ *
+ * @param {() => Promise<boolean>} ready
+ * @returns {() => Promise<boolean>}
+ */
+const wrapReadyHook = (ready) => {
+	return async () => {
+		const isReady = await ready();
+
+		if (typeof isReady !== 'boolean') {
+			throw new TypeError('ready must resolve to a boolean value.');
+		}
+
+		return isReady;
+	};
+};
+
+/**
+ * Wraps an image handler with strict string-return validation.
+ *
+ * @param {(target: unknown) => Promise<string>} imageHandler
+ * @returns {(target: unknown) => Promise<string>}
+ */
+const wrapImageHandler = (imageHandler) => {
+	return async (target) => {
+		const imageUrl = await imageHandler(target);
+
+		if (typeof imageUrl !== 'string') {
+			throw new TypeError('imageHandler must resolve to a string URL.');
+		}
+
+		return imageUrl;
+	};
+};
+
+/**
+ * Creates a default readiness hook for browser and non-browser contexts.
+ *
+ * @param {Document|object|null} dom
+ * @returns {() => Promise<boolean>}
+ */
 const createDefaultReady = (dom) => {
 	const fallbackDocument = typeof document !== 'undefined' ? document : null;
 	const activeDocument = dom ?? fallbackDocument;
@@ -57,6 +116,8 @@ const createDefaultReady = (dom) => {
 };
 
 /**
+ * Validates and normalizes runtime options into a stable shape.
+ *
  * @param {RunAccessibilityChecksOptions} options
  * @returns {RunAccessibilityChecksOptions}
  */
@@ -87,6 +148,12 @@ const normalizeOptions = (options) => {
 		typeof normalized.imageHandler !== 'function'
 	) {
 		throw new TypeError('imageHandler must be a function when provided.');
+	}
+
+	normalized.ready = wrapReadyHook(normalized.ready);
+
+	if (normalized.imageHandler) {
+		normalized.imageHandler = wrapImageHandler(normalized.imageHandler);
 	}
 
 	if (!Array.isArray(normalized.plugins)) {
