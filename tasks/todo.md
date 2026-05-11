@@ -1,7 +1,8 @@
 # Todo
 
-- [ ] Task 1: Draft example contract spec
-- [ ] Task 2: Specify browser Pages-ready behavior
-- [ ] Task 3: Specify Node repo example behavior
-- [ ] Task 4: Add discoverability pointers
-- [ ] Task 5: Review and prepare handoff
+This file is a starter example. Copy and adapt it for your feature.
+
+- [ ] Task 1: Define scope and constraints
+- [ ] Task 2: Implement smallest vertical slice
+- [ ] Task 3: Add quality gates and checks
+- [ ] Task 4: Prepare PR communication
