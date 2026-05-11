@@ -19,11 +19,11 @@ Once the core framework can accept a DOM and run `plugins`, we need one real int
 
 ## Chapters
 
-| #   | Branch                                       | One-sentence scope                                                          | Budget |
-| --- | -------------------------------------------- | --------------------------------------------------------------------------- | ------ |
-| 01  | `chapter/library-v1/06-axe-adapter`          | Add the AxeCore adapter that consumes the DOM through `plugins`. | <250 lines |
-| 02  | `chapter/library-v1/07-axe-normalization`    | Normalize AxeCore output into the shared serializable result schema. | <250 lines |
-| 03  | `chapter/library-v1/08-integration-docs`     | Add a minimal example or usage note showing how to plug AxeCore into the framework. | <250 lines |
+| #   | Branch                                    | One-sentence scope                                                                  | Budget     |
+| --- | ----------------------------------------- | ----------------------------------------------------------------------------------- | ---------- |
+| 01  | `chapter/library-v1/06-axe-adapter`       | Add the AxeCore adapter that consumes the DOM through `plugins`.                    | <250 lines |
+| 02  | `chapter/library-v1/07-axe-normalization` | Normalize AxeCore output into the shared serializable result schema.                | <250 lines |
+| 03  | `chapter/library-v1/08-integration-docs`  | Add a minimal example or usage note showing how to plug AxeCore into the framework. | <250 lines |
 
 ## Out of Scope
 

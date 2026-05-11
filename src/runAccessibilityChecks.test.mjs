@@ -55,10 +55,12 @@ test('runAccessibilityChecks waits for ready before invoking plugins', async () 
 			await readyGate;
 			return true;
 		},
-		plugins: [() => {
-			events.push('plugin');
-			return [];
-		}],
+		plugins: [
+			() => {
+				events.push('plugin');
+				return [];
+			},
+		],
 	});
 
 	await Promise.resolve();
@@ -75,10 +77,12 @@ test('runAccessibilityChecks returns no findings when ready resolves false', asy
 
 	const results = await runAccessibilityChecks({
 		ready: async () => false,
-		plugins: [() => {
-			pluginCalled = true;
-			return [{ ruleId: 'should-not-run' }];
-		}],
+		plugins: [
+			() => {
+				pluginCalled = true;
+				return [{ ruleId: 'should-not-run' }];
+			},
+		],
 	});
 
 	assert.equal(pluginCalled, false);
@@ -106,10 +110,12 @@ test('runAccessibilityChecks passes dom and imageHandler into plugins', async ()
 		dom,
 		imageHandler,
 		ready: async () => true,
-		plugins: [async (context) => {
-			receivedContext = context;
-			return [];
-		}],
+		plugins: [
+			async (context) => {
+				receivedContext = context;
+				return [];
+			},
+		],
 	});
 
 	assert.equal(receivedContext.dom, dom);
@@ -125,10 +131,12 @@ test('runAccessibilityChecks rejects non-string imageHandler return values', asy
 		runAccessibilityChecks({
 			ready: async () => true,
 			imageHandler: async () => 42,
-			plugins: [async ({ imageHandler }) => {
-				await imageHandler('target');
-				return [];
-			}],
+			plugins: [
+				async ({ imageHandler }) => {
+					await imageHandler('target');
+					return [];
+				},
+			],
 		}),
 		{
 			message: 'imageHandler must resolve to a string URL.',
@@ -216,9 +224,11 @@ test('runAccessibilityChecks surfaces plugin errors', async () => {
 	await assert.rejects(
 		runAccessibilityChecks({
 			ready: async () => true,
-			plugins: [() => {
-				throw new Error('plugin failed');
-			}],
+			plugins: [
+				() => {
+					throw new Error('plugin failed');
+				},
+			],
 		}),
 		{
 			message: 'plugin failed',
@@ -277,10 +287,16 @@ test('normalizeOptions defaults plugins to an empty array when missing or invali
 
 	try {
 		assert.deepEqual(normalizeOptions({}).plugins, []);
-		assert.deepEqual(normalizeOptions({ plugins: 'not-an-array' }).plugins, []);
+		assert.deepEqual(
+			normalizeOptions({ plugins: 'not-an-array' }).plugins,
+			[]
+		);
 		assert.deepEqual(normalizeOptions({ plugins: null }).plugins, []);
 
-		assert.deepEqual(normalizeOptions({ plugins: ['not-a-function'] }).plugins, []);
+		assert.deepEqual(
+			normalizeOptions({ plugins: ['not-a-function'] }).plugins,
+			[]
+		);
 	} finally {
 		console.warn = originalWarn;
 	}
