@@ -128,6 +128,18 @@ const normalizeOptions = (options) => {
 		);
 	}
 
+	if (options.ready === null) {
+		throw new TypeError('ready must be a function when provided.');
+	}
+
+	if (options.imageHandler === null) {
+		throw new TypeError('imageHandler must be a function when provided.');
+	}
+
+	if (options.plugins === null) {
+		throw new TypeError('plugins must be an array when provided.');
+	}
+
 	// Keep this object shape stable for downstream execution.
 	const normalized = {
 		dom: options.dom ?? null,

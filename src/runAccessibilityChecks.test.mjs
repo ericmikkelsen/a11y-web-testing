@@ -226,8 +226,22 @@ test('normalizeOptions rejects invalid plugins values', () => {
 		message: 'plugins must be an array when provided.',
 	});
 
+	assert.throws(() => normalizeOptions({ plugins: null }), {
+		message: 'plugins must be an array when provided.',
+	});
+
 	assert.throws(() => normalizeOptions({ plugins: ['not-a-function'] }), {
 		message: 'plugins[0] must be a function.',
+	});
+});
+
+test('normalizeOptions rejects null hook values', () => {
+	assert.throws(() => normalizeOptions({ ready: null, plugins: [] }), {
+		message: 'ready must be a function when provided.',
+	});
+
+	assert.throws(() => normalizeOptions({ imageHandler: null, plugins: [] }), {
+		message: 'imageHandler must be a function when provided.',
 	});
 });
 
