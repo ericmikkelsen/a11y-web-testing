@@ -221,28 +221,27 @@ test('normalizeOptions default ready waits for DOMContentLoaded when loading', a
 
 // Guardrails for invalid option shapes.
 
-test('normalizeOptions rejects invalid plugins values', () => {
-	assert.throws(() => normalizeOptions({ plugins: 'not-an-array' }), {
-		message: 'plugins must be an array when provided.',
-	});
+test('normalizeOptions defaults plugins to an empty array when missing or invalid', () => {
+	const warnings = [];
+	const originalWarn = console.warn;
 
-	assert.throws(() => normalizeOptions({ plugins: null }), {
-		message: 'plugins must be an array when provided.',
-	});
+	console.warn = (message) => warnings.push(message);
 
-	assert.throws(() => normalizeOptions({ plugins: ['not-a-function'] }), {
-		message: 'plugins[0] must be a function.',
-	});
-});
+	try {
+		assert.deepEqual(normalizeOptions({}).plugins, []);
+		assert.deepEqual(normalizeOptions({ plugins: 'not-an-array' }).plugins, []);
+		assert.deepEqual(normalizeOptions({ plugins: null }).plugins, []);
 
-test('normalizeOptions rejects null hook values', () => {
-	assert.throws(() => normalizeOptions({ ready: null, plugins: [] }), {
-		message: 'ready must be a function when provided.',
-	});
+		assert.deepEqual(normalizeOptions({ plugins: ['not-a-function'] }).plugins, []);
+	} finally {
+		console.warn = originalWarn;
+	}
 
-	assert.throws(() => normalizeOptions({ imageHandler: null, plugins: [] }), {
-		message: 'imageHandler must be a function when provided.',
-	});
+	assert.deepEqual(warnings, [
+		'plugins must be an array; using none.',
+		'plugins must be an array; using none.',
+		'plugins[0] must be a function; skipping it.',
+	]);
 });
 
 test('normalizeOptions ignores unknown options for forward compatibility', () => {

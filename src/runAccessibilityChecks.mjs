@@ -128,39 +128,36 @@ const normalizeOptions = (options) => {
 		);
 	}
 
-	if (options.ready === null) {
-		throw new TypeError('ready must be a function when provided.');
+	const normalizedDom = options.dom ?? null;
+	let ready = createDefaultReady(normalizedDom);
+	let imageHandler;
+	let plugins = [];
+
+	if (typeof options.ready === 'function') {
+		ready = options.ready;
+	} else if (options.ready !== undefined) {
+		console.warn('ready must be a function; using default ready.');
 	}
 
-	if (options.imageHandler === null) {
-		throw new TypeError('imageHandler must be a function when provided.');
+	if (typeof options.imageHandler === 'function') {
+		imageHandler = options.imageHandler;
+	} else if (options.imageHandler !== undefined) {
+		console.warn('imageHandler must be a function; skipping it.');
 	}
 
-	if (options.plugins === null) {
-		throw new TypeError('plugins must be an array when provided.');
+	if (Array.isArray(options.plugins)) {
+		plugins = options.plugins;
+	} else if (options.plugins !== undefined) {
+		console.warn('plugins must be an array; using none.');
 	}
 
 	// Keep this object shape stable for downstream execution.
 	const normalized = {
-		dom: options.dom ?? null,
-		ready: options.ready ?? createDefaultReady(options.dom ?? null),
-		imageHandler: options.imageHandler ?? undefined,
-		plugins: options.plugins ?? [],
+		dom: normalizedDom,
+		ready,
+		imageHandler,
+		plugins,
 	};
-
-	if (
-		normalized.ready !== undefined &&
-		typeof normalized.ready !== 'function'
-	) {
-		throw new TypeError('ready must be a function when provided.');
-	}
-
-	if (
-		normalized.imageHandler !== undefined &&
-		typeof normalized.imageHandler !== 'function'
-	) {
-		throw new TypeError('imageHandler must be a function when provided.');
-	}
 
 	normalized.ready = wrapReadyHook(normalized.ready);
 
@@ -168,15 +165,14 @@ const normalizeOptions = (options) => {
 		normalized.imageHandler = wrapImageHandler(normalized.imageHandler);
 	}
 
-	if (!Array.isArray(normalized.plugins)) {
-		throw new TypeError('plugins must be an array when provided.');
-	}
-
 	// Plugins are the extension point; each entry must be executable.
-	normalized.plugins.forEach((testFn, index) => {
-		if (typeof testFn !== 'function') {
-			throw new TypeError(`plugins[${index}] must be a function.`);
+	normalized.plugins = normalized.plugins.filter((testFn, index) => {
+		if (typeof testFn === 'function') {
+			return true;
 		}
+
+		console.warn(`plugins[${index}] must be a function; skipping it.`);
+		return false;
 	});
 
 	return normalized;
